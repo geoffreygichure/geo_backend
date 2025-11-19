@@ -16,7 +16,20 @@ const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 const app = express();
-app.use(cors());
+
+// Configure CORS for production and development
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://geo-front-media.onrender.com',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(`/uploads`, express.static(path.join(process.cwd(), UPLOAD_DIR)));
 
